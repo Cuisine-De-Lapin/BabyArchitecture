@@ -1,0 +1,21 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = "BabyArchitecture"
+include ':app'
+include ':data:DataRoom'
+include ':domain:DomainAction'
+include ':domain:DomainStatistics'
+include ':presentation:PresentationActionList'
+
