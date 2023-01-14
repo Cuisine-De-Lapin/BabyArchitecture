@@ -1,11 +1,11 @@
-package etude.de.lapin.baby.domain.action.usecase.category
+package etude.de.lapin.baby.domain.action.usecase.action
 
-import etude.de.lapin.baby.domain.action.model.Category
-import etude.de.lapin.baby.domain.action.repository.CategoryRepository
+import etude.de.lapin.baby.domain.action.model.Action
+import etude.de.lapin.baby.domain.action.repository.ActionRepository
 import javax.inject.Inject
 
-class CategoryDeleteUsecase @Inject constructor(private val categoryRepository: CategoryRepository) {
-    suspend operator fun invoke(category: Category) {
-        categoryRepository.delete(category)
+class ActionDeleteUsecase @Inject constructor(private val actionRepository: ActionRepository) {
+    suspend operator fun invoke(action: Action) {
+        actionRepository.delete(action)
     }
 }

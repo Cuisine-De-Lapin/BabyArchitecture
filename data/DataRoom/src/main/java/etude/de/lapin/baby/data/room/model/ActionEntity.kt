@@ -5,16 +5,19 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "Action")
-class ActionEntity {
+data class ActionEntity (
     @PrimaryKey
-    val id = 0
+    val id: Int = 0,
 
     @ColumnInfo(name = "categoryId")
-    val categoryId: Int? = null
+    val categoryId: Int,
 
     @ColumnInfo(name = "volume")
-    val volume: Int? = null
+    val volume: Int? = null,
 
     @ColumnInfo(name = "timestamp")
-    val timestamp: Long? = null
-}
+    val timestamp: Long,
+
+    @ColumnInfo(name = "memo")
+    val memo: String? = null
+)

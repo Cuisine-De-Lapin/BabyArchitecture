@@ -1,4 +1,4 @@
-package etude.de.lapin.baby.architecture.module
+package etude.de.lapin.baby.data.room.module
 
 import android.content.Context
 import androidx.room.Room

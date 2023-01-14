@@ -6,11 +6,23 @@ plugins {
 
 android {
     namespace 'etude.de.lapin.baby.data.room'
-    compileSdk 32
+    compileSdk 33
+
+    def apikeyProperties = file('database.properties')
+    def DATABASE_NAME = "default_database"
+
+    if (apikeyProperties.canRead()) {
+        def props = new Properties()
+        props.load(new FileInputStream(apikeyProperties))
+
+        DATABASE_NAME = props.getProperty('database_name').toString()
+    }
 
     defaultConfig {
         minSdk 23
-        targetSdk 32
+        targetSdk 33
+
+        buildConfigField "String", "DATABASE_NAME", DATABASE_NAME
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -32,7 +44,7 @@ android {
 }
 
 dependencies {
-    def room_version = "2.4.3"
+    def room_version = "2.5.0"
 
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
@@ -40,10 +52,21 @@ dependencies {
 
     implementation project(":domain:DomainAction")
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.5.1'
+    // hilt
+    implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
+    kapt "com.google.dagger:hilt-compiler:2.44.2"
+    implementation 'com.google.dagger:hilt-android:2.44.2'
+    annotationProcessor 'com.google.dagger:hilt-compiler:2.44.2'
+
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'com.google.android.material:material:1.7.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    // test용으로만 쓰이는 coroutine
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
+
 }
