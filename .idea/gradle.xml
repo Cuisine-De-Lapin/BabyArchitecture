@@ -15,8 +15,6 @@
             <option value="$PROJECT_DIR$/data/DataRoom" />
             <option value="$PROJECT_DIR$/domain" />
             <option value="$PROJECT_DIR$/domain/DomainAction" />
-            <option value="$PROJECT_DIR$/presentation" />
-            <option value="$PROJECT_DIR$/presentation/PresentationActionList" />
           </set>
         </option>
       </GradleProjectSettings>

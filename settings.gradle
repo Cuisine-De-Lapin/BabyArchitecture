@@ -16,5 +16,4 @@ rootProject.name = "BabyArchitecture"
 include ':app'
 include ':data:DataRoom'
 include ':domain:DomainAction'
-include ':presentation:PresentationActionList'
 
