@@ -15,6 +15,8 @@ import etude.de.lapin.baby.domain.action.model.Action
 import etude.de.lapin.baby.domain.action.model.Category
 import etude.de.lapin.baby.domain.action.repository.ActionRepository
 import etude.de.lapin.baby.domain.action.repository.CategoryRepository
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -69,24 +71,24 @@ class ActionDataTest {
 
             categoryRepository.insert(category)
 
-            val getAllCategory = categoryRepository.getAllCategory()
-            assert(getAllCategory?.size == 1)
-            assert(getAllCategory?.get(0) == category)
+            val getAllCategory = categoryRepository.getAllCategory().first()
+            assert(getAllCategory.size == 1)
+            assert(getAllCategory.get(0) == category)
 
-            val getCategory = categoryRepository.getCategoryById(category.id)
+            val getCategory = categoryRepository.getCategoryById(category.id).first()
             assert(getCategory == category)
 
             actionRepository.insert(action)
 
-            val getById = actionRepository.getActionById(action.id)
-            val getDailyList = actionRepository.getDailyAction(today)
-            val getCategoryList = actionRepository.getDailyActionByCategory(today, category.id)
+            val getById = actionRepository.getActionById(action.id).first()
+            val getDailyList = actionRepository.getDailyAction(today).first()
+            val getCategoryList = actionRepository.getDailyActionByCategory(today, category.id).first()
 
             assert(action == getById)
-            assert(getDailyList?.size == 1)
-            assert(action == getDailyList?.get(0))
-            assert(getCategoryList?.size == 1)
-            assert(action == getCategoryList?.get(0))
+            assert(getDailyList.size == 1)
+            assert(action == getDailyList[0])
+            assert(getCategoryList.size == 1)
+            assert(action == getCategoryList[0])
         }
 
     }
@@ -115,13 +117,13 @@ class ActionDataTest {
         launch {
             actionRepository.insert(action)
 
-            val getById = actionRepository.getActionById(action.id)
-            val getDailyList = actionRepository.getDailyAction(today)
-            val getCategoryList = actionRepository.getDailyActionByCategory(today, category.id)
+            val getById = actionRepository.getActionById(action.id).first()
+            val getDailyList = actionRepository.getDailyAction(today).first()
+            val getCategoryList = actionRepository.getDailyActionByCategory(today, category.id).first()
 
             assert(getById == null)
-            assert(getDailyList?.size == 0)
-            assert(getCategoryList?.size == 0)
+            assert(getDailyList.isEmpty())
+            assert(getCategoryList.isEmpty())
         }
     }
 
@@ -158,22 +160,22 @@ class ActionDataTest {
         launch {
             categoryRepository.insert(category)
 
-            val getAllCategory = categoryRepository.getAllCategory()
-            assert(getAllCategory?.size == 1)
-            assert(getAllCategory?.get(0) == category)
+            val getAllCategory = categoryRepository.getAllCategory().first()
+            assert(getAllCategory.size == 1)
+            assert(getAllCategory[0] == category)
 
-            val getCategory = categoryRepository.getCategoryById(category.id)
+            val getCategory = categoryRepository.getCategoryById(category.id).first()
             assert(getCategory == category)
 
             actionRepository.insert(action)
 
-            val getById = actionRepository.getActionById(action.id)
-            val getDailyList = actionRepository.getDailyAction(today)
-            val getCategoryList = actionRepository.getDailyActionByCategory(today, category.id)
+            val getById = actionRepository.getActionById(action.id).first()
+            val getDailyList = actionRepository.getDailyAction(today).first()
+            val getCategoryList = actionRepository.getDailyActionByCategory(today, category.id).first()
 
             assert(getById == null)
-            assert(getDailyList?.size == 0)
-            assert(getCategoryList?.size == 0)
+            assert(getDailyList.isEmpty())
+            assert(getCategoryList.isEmpty())
         }
     }
 
@@ -203,23 +205,23 @@ class ActionDataTest {
         launch {
             categoryRepository.insert(category)
 
-            val getAllCategory = categoryRepository.getAllCategory()
+            val getAllCategory = categoryRepository.getAllCategory().first()
             assert(getAllCategory?.size == 0)
 
-            val getCategory = categoryRepository.getCategoryById(category.id)
+            val getCategory = categoryRepository.getCategoryById(category.id).first()
             assert(getCategory == category)
 
             actionRepository.insert(action)
 
-            val getById = actionRepository.getActionById(action.id)
-            val getDailyList = actionRepository.getDailyAction(today)
-            val getCategoryList = actionRepository.getDailyActionByCategory(today, category.id)
+            val getById = actionRepository.getActionById(action.id).first()
+            val getDailyList = actionRepository.getDailyAction(today).first()
+            val getCategoryList = actionRepository.getDailyActionByCategory(today, category.id).first()
 
             assert(action == getById)
-            assert(getDailyList?.size == 1)
-            assert(action == getDailyList?.get(0))
-            assert(getCategoryList?.size == 1)
-            assert(action == getCategoryList?.get(0))
+            assert(getDailyList.size == 1)
+            assert(action == getDailyList[0])
+            assert(getCategoryList.size == 1)
+            assert(action == getCategoryList[0])
         }
     }
 
@@ -247,31 +249,31 @@ class ActionDataTest {
         categoryRepository.insert(category)
         actionRepository.insert(action)
 
-        val getById = actionRepository.getActionById(action.id)
-        val getDailyList = actionRepository.getDailyAction(today)
-        val getCategoryList = actionRepository.getDailyActionByCategory(today, category.id)
+        val getById = actionRepository.getActionById(action.id).first()
+        val getDailyList = actionRepository.getDailyAction(today).first()
+        val getCategoryList = actionRepository.getDailyActionByCategory(today, category.id).first()
 
         assert(action == getById)
-        assert(getDailyList?.size == 1)
-        assert(action == getDailyList?.get(0))
-        assert(getCategoryList?.size == 1)
-        assert(action == getCategoryList?.get(0))
+        assert(getDailyList.size == 1)
+        assert(action == getDailyList[0])
+        assert(getCategoryList.size == 1)
+        assert(action == getCategoryList[0])
 
         categoryRepository.delete(category)
 
-        val getAllCategoryDeleted = categoryRepository.getAllCategory()
-        assert(getAllCategoryDeleted?.size == 0)
+        val getAllCategoryDeleted = categoryRepository.getAllCategory().first()
+        assert(getAllCategoryDeleted.isEmpty())
 
-        val getCategoryDeleted = categoryRepository.getCategoryById(category.id)
+        val getCategoryDeleted = categoryRepository.getCategoryById(category.id).first()
         assert(getCategoryDeleted == null)
 
-        val getByIdDeleted = actionRepository.getActionById(action.id)
-        val getDailyListDeleted = actionRepository.getDailyAction(today)
-        val getCategoryListDeleted = actionRepository.getDailyActionByCategory(today, category.id)
+        val getByIdDeleted = actionRepository.getActionById(action.id).first()
+        val getDailyListDeleted = actionRepository.getDailyAction(today).first()
+        val getCategoryListDeleted = actionRepository.getDailyActionByCategory(today, category.id).first()
 
         assert(getByIdDeleted == null)
-        assert(getDailyListDeleted?.size == 0)
-        assert(getCategoryListDeleted?.size == 0)
+        assert(getDailyListDeleted.isEmpty())
+        assert(getCategoryListDeleted.isEmpty())
     }
 
     @Test
@@ -325,21 +327,21 @@ class ActionDataTest {
             actionRepository.insert(endOfTodayAction)
             actionRepository.insert(endOfYesterdayAction)
 
-            val getDailyList = actionRepository.getDailyAction(today)
-            val getCategoryList = actionRepository.getDailyActionByCategory(today, category.id)
+            val getDailyList = actionRepository.getDailyAction(today).first()
+            val getCategoryList = actionRepository.getDailyActionByCategory(today, category.id).first()
 
-            assert(getDailyList?.size == 2)
-            assert(getCategoryList?.size == 2)
+            assert(getDailyList.size == 2)
+            assert(getCategoryList.size == 2)
 
-            val getYesterdayList = actionRepository.getDailyAction(yesterday)
-            val getYesterdayListCategory = actionRepository.getDailyActionByCategory(yesterday, category.id)
-            assert(getYesterdayList?.size == 1)
-            assert(getYesterdayListCategory?.size == 1)
+            val getYesterdayList = actionRepository.getDailyAction(yesterday).first()
+            val getYesterdayListCategory = actionRepository.getDailyActionByCategory(yesterday, category.id).first()
+            assert(getYesterdayList.size == 1)
+            assert(getYesterdayListCategory.size == 1)
 
-            val getTomorrowList = actionRepository.getDailyAction(tomorrow)
-            val getTomorrowListCategory = actionRepository.getDailyActionByCategory(tomorrow, category.id)
-            assert(getTomorrowList?.size == 0)
-            assert(getTomorrowListCategory?.size == 0)
+            val getTomorrowList = actionRepository.getDailyAction(tomorrow).first()
+            val getTomorrowListCategory = actionRepository.getDailyActionByCategory(tomorrow, category.id).first()
+            assert(getTomorrowList.isEmpty())
+            assert(getTomorrowListCategory.isEmpty())
         }
 
     }
@@ -371,11 +373,11 @@ class ActionDataTest {
         launch {
             categoryRepository.insert(category)
             actionRepository.insert(action)
-            val getById = actionRepository.getActionById(action.id)
+            val getById = actionRepository.getActionById(action.id).first()
             assert(getById?.categoryName == category.name)
 
             categoryRepository.insert(newCategory)
-            val getByIdCategoryChanged = actionRepository.getActionById(action.id)
+            val getByIdCategoryChanged = actionRepository.getActionById(action.id).first()
             assert(getByIdCategoryChanged?.categoryName == newCategory.name)
 
         }
@@ -470,10 +472,10 @@ class ActionDataTest {
             actionRepository.insert(action3_1)
             actionRepository.insert(action3_2)
 
-            val getDailyList = actionRepository.getDailyAction(today)
-            val getCategory1List = actionRepository.getDailyActionByCategory(today, category1.id)
-            val getCategory2List = actionRepository.getDailyActionByCategory(today, category2.id)
-            val getCategory3List = actionRepository.getDailyActionByCategory(today, category3.id)
+            val getDailyList = actionRepository.getDailyAction(today).first()
+            val getCategory1List = actionRepository.getDailyActionByCategory(today, category1.id).first()
+            val getCategory2List = actionRepository.getDailyActionByCategory(today, category2.id).first()
+            val getCategory3List = actionRepository.getDailyActionByCategory(today, category3.id).first()
 
             assert(getDailyList?.size == 6)
             assert(getCategory1List?.size == 3)

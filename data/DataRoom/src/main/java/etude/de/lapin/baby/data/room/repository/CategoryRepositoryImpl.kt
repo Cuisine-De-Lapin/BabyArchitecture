@@ -4,18 +4,21 @@ import etude.de.lapin.baby.data.room.dao.CategoryDAO
 import etude.de.lapin.baby.data.room.mapper.CategoryMapper
 import etude.de.lapin.baby.domain.action.model.Category
 import etude.de.lapin.baby.domain.action.repository.CategoryRepository
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class CategoryRepositoryImpl @Inject constructor(
     private val categoryDAO: CategoryDAO,
     private val categoryMapper: CategoryMapper
 ) : CategoryRepository {
-    override suspend fun getAllCategory() = categoryDAO.loadAllCategory()?.map {
-        categoryMapper.mapToCategory(it)
+    override suspend fun getAllCategory() = categoryDAO.loadAllCategory().map {
+        it.map { item ->
+            categoryMapper.mapToCategory(item)
+        }
     }
 
-    override suspend fun getCategoryById(id: Int) = categoryDAO.loadCategoryById(id)?.let {
-        categoryMapper.mapToCategory(it)
+    override suspend fun getCategoryById(id: Int) = categoryDAO.loadCategoryById(id).map {
+        it?.let { categoryMapper.mapToCategory(it) }
     }
 
     override suspend fun hideCategoryById(id: Int) = categoryDAO.hideCategoryById(id)

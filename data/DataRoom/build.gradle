@@ -67,6 +67,8 @@ dependencies {
 
     // test용으로만 쓰이는 coroutine
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
+    implementation "androidx.room:room-ktx:$room_version"
+
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
 
 }

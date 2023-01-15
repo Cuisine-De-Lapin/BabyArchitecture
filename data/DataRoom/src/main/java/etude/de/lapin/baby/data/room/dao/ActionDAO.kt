@@ -3,6 +3,7 @@ package etude.de.lapin.baby.data.room.dao
 import androidx.room.*
 import etude.de.lapin.baby.data.room.model.ActionEntity
 import etude.de.lapin.baby.data.room.model.ActionResultEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ActionDAO {
@@ -14,27 +15,25 @@ interface ActionDAO {
     fun loadAll(): List<ActionEntity>?
 
     @Query("SELECT a.id, a.categoryId, b.name categoryName, a.volume, a.timestamp, a.memo FROM `Action` a  INNER JOIN `Category` b  ON a.categoryId = b.id")
-    fun loadAllAction(): List<ActionResultEntity>?
+    fun loadAllAction(): Flow<List<ActionResultEntity>>
 
     @Query("SELECT a.id, a.categoryId, b.name categoryName, a.volume, a.timestamp, a.memo FROM `Action` a  INNER JOIN `Category` b  ON a.categoryId = b.id WHERE timestamp >= :today AND timestamp < (:today + :oneDay)")
-    fun loadDailyAction(today: Long, oneDay: Long = ONE_DAY): List<ActionResultEntity>?
+    fun loadDailyAction(today: Long, oneDay: Long = ONE_DAY): Flow<List<ActionResultEntity>>
 
     @Query("SELECT a.id, a.categoryId, b.name categoryName, a.volume, a.timestamp, a.memo FROM `Action` a  INNER JOIN `Category` b  ON a.categoryId = b.id WHERE timestamp >= :today AND timestamp < (:today + :oneDay) AND categoryId = :categoryId")
-    fun loadDailyActionByCategory(today: Long, categoryId: Int, oneDay: Long = ONE_DAY): List<ActionResultEntity>?
+    fun loadDailyActionByCategory(today: Long, categoryId: Int, oneDay: Long = ONE_DAY): Flow<List<ActionResultEntity>>
 
     @Query("SELECT a.id, a.categoryId, b.name categoryName, a.volume, a.timestamp, a.memo FROM `Action` a  INNER JOIN `Category` b  ON a.categoryId = b.id WHERE a.id = :id")
-    fun loadActionById(id: Int): ActionResultEntity?
+    fun loadActionById(id: Int): Flow<ActionResultEntity?>
 
     @Query("SELECT SUM(volume) FROM `Action` WHERE timestamp >= :today AND timestamp < (:today + :oneDay) AND categoryId = :categoryId")
-    fun calculateTodayVolumeSumByCategory(today: Long, categoryId: Int, oneDay: Long = ONE_DAY): Int
+    fun calculateTodayVolumeSumByCategory(today: Long, categoryId: Int, oneDay: Long = ONE_DAY): Flow<Int>
 
     @Query("SELECT COUNT(*) FROM `Action` WHERE timestamp >= :today AND timestamp < (:today + :oneDay) AND categoryId = :categoryId")
-    fun calculateTodayCountByCategory(today: Long, categoryId: Int, oneDay: Long = ONE_DAY): Int
+    fun calculateTodayCountByCategory(today: Long, categoryId: Int, oneDay: Long = ONE_DAY): Flow<Int>
 
     @Query("DELETE FROM `Action` WHERE categoryId = :categoryId")
     fun deleteByCategoryId(categoryId: Int)
-
-    // TODO : 카테고리 별로 삭제하는거 추가하기
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(action: ActionEntity)
