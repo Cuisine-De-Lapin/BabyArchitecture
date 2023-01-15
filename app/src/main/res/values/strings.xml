@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">BabyArchitecture</string>
+    <string name="category_insert_name">카테고리명</string>
+    <string name="category_insert_need_volume">용량 측정</string>
+    <string name="category_insert_done">추가하기</string>
+    <string name="category_update_done">수정하기</string>
 </resources>

@@ -13,21 +13,21 @@ class ActionRepositoryImpl @Inject constructor(
     private val actionDAO: ActionDAO,
     private val actionMapper: ActionMapper,
 ) : ActionRepository {
-    override suspend fun getDailyAction(today: Long) = actionDAO.loadDailyAction(today).map {
+    override fun getDailyAction(today: Long) = actionDAO.loadDailyAction(today).map {
         it.map { item ->
             actionMapper.mapToAction(item)
         }
 
     }
-    override suspend fun getDailyActionByCategory(today: Long, categoryId: Int) =
+    override fun getDailyActionByCategory(today: Long, categoryId: Int) =
         actionDAO.loadDailyActionByCategory(today, categoryId).map {
             it.map { item ->
                 actionMapper.mapToAction(item)
             }
         }
+    override fun getActionById(id: Int) = actionDAO.loadActionById(id).map { it?.let { actionMapper.mapToAction(it) } }
 
     override suspend fun deleteByCategoryId(categoryId: Int) = actionDAO.deleteByCategoryId(categoryId)
-    override suspend fun getActionById(id: Int) = actionDAO.loadActionById(id).map { it?.let { actionMapper.mapToAction(it) } }
     override suspend fun insert(action: Action) = actionDAO.insert(actionMapper.mapToEntity(action))
     override suspend fun delete(action: Action) = actionDAO.delete(actionMapper.mapToEntity(action))
 }

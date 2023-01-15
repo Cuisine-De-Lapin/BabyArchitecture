@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "Action")
 data class ActionEntity (
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
     @ColumnInfo(name = "categoryId")

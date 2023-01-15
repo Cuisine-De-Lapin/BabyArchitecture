@@ -11,13 +11,13 @@ class CategoryRepositoryImpl @Inject constructor(
     private val categoryDAO: CategoryDAO,
     private val categoryMapper: CategoryMapper
 ) : CategoryRepository {
-    override suspend fun getAllCategory() = categoryDAO.loadAllCategory().map {
+    override fun getAllCategory() = categoryDAO.loadAllCategory().map {
         it.map { item ->
             categoryMapper.mapToCategory(item)
         }
     }
 
-    override suspend fun getCategoryById(id: Int) = categoryDAO.loadCategoryById(id).map {
+    override fun getCategoryById(id: Int) = categoryDAO.loadCategoryById(id).map {
         it?.let { categoryMapper.mapToCategory(it) }
     }
 

@@ -4,5 +4,5 @@ import etude.de.lapin.baby.domain.action.repository.ActionRepository
 import javax.inject.Inject
 
 class ActionGetDailyByCategoryUsecase @Inject constructor(private val actionRepository: ActionRepository) {
-    suspend operator fun invoke(today: Long, categoryId: Int) = actionRepository.getDailyActionByCategory(today, categoryId)
+    operator fun invoke(today: Long, categoryId: Int) = actionRepository.getDailyActionByCategory(today, categoryId)
 }
