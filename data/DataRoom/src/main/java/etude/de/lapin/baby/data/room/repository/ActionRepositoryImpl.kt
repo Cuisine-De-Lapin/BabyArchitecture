@@ -18,6 +18,7 @@ class ActionRepositoryImpl @Inject constructor(
             actionMapper.mapToAction(it)
         }
 
+    override suspend fun deleteByCategoryId(categoryId: Int) = actionDAO.deleteByCategoryId(categoryId)
     override suspend fun getActionById(id: Int) = actionDAO.loadActionById(id)?.let { actionMapper.mapToAction(it) }
     override suspend fun insert(action: Action) = actionDAO.insert(actionMapper.mapToEntity(action))
     override suspend fun delete(action: Action) = actionDAO.delete(actionMapper.mapToEntity(action))

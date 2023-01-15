@@ -37,7 +37,8 @@ class ActionDataTest {
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         database = Room.inMemoryDatabaseBuilder(
-            context, BabyDatabase::class.java).build()
+            context, BabyDatabase::class.java
+        ).build()
         actionDAO = database.actionDao()
         categoryDAO = database.categoryDao()
         actionMapper = ActionMapper()
@@ -48,7 +49,7 @@ class ActionDataTest {
 
     @Test
     fun insertAction() = runTest {
-        val today = 91152000000L
+        val today = 91152000000L // 1972-11-21
         val category = Category(
             id = 0,
             name = "yainsidae",
@@ -65,6 +66,7 @@ class ActionDataTest {
         )
 
         launch {
+
             categoryRepository.insert(category)
 
             val getAllCategory = categoryRepository.getAllCategory()
@@ -89,18 +91,403 @@ class ActionDataTest {
 
     }
 
-    // Test Plan
-    // 없는 카테고리를 지정한 액션을 노출하지 않는다.
-    // 카테고리 삭제 후 액션이 보이지 않는 것 및 삭제된거 확인하기
-    // 카테고리 감춤 후 액션이 보이지 않는 것 확인하기
-    // 날짜가 다르면 액션을 노출하지 않는다
-    // 카테고리 이름을 수정하면 액션 조회시에도 반영이 된다
-    //
+    @Test
+    fun noCategoryNoAction() = runTest {
+        val today = 91152000000L // 1972-11-21
+
+        // insert category isn't inserted.
+        val category = Category(
+            id = 0,
+            name = "yainsidae",
+            needVolume = true,
+            visible = true
+        )
+
+        val action = Action(
+            id = 0,
+            categoryId = category.id,
+            categoryName = category.name,
+            volume = 100,
+            timestamp = today,
+            memo = "orange-bottle"
+        )
+
+        launch {
+            actionRepository.insert(action)
+
+            val getById = actionRepository.getActionById(action.id)
+            val getDailyList = actionRepository.getDailyAction(today)
+            val getCategoryList = actionRepository.getDailyActionByCategory(today, category.id)
+
+            assert(getById == null)
+            assert(getDailyList?.size == 0)
+            assert(getCategoryList?.size == 0)
+        }
+    }
+
+    // 등록되지 않은 카테고리로 등록된 액션이 있는 경우 보이지 않도록
+    @Test
+    fun wrongCategoryNoAction() = runTest {
+        val today = 91152000000L // 1972-11-21
+
+        // 등록된 카테고리
+        val category = Category(
+            id = 0,
+            name = "yainsidae",
+            needVolume = true,
+            visible = true
+        )
+
+        // 등록되지 않은 카테고리
+        val wrongCategory = Category(
+            id = 1,
+            name = "simyoung",
+            needVolume = true,
+            visible = true
+        )
+
+        val action = Action(
+            id = 0,
+            categoryId = wrongCategory.id,
+            categoryName = wrongCategory.name,
+            volume = 100,
+            timestamp = today,
+            memo = "orange-bottle"
+        )
+
+        launch {
+            categoryRepository.insert(category)
+
+            val getAllCategory = categoryRepository.getAllCategory()
+            assert(getAllCategory?.size == 1)
+            assert(getAllCategory?.get(0) == category)
+
+            val getCategory = categoryRepository.getCategoryById(category.id)
+            assert(getCategory == category)
+
+            actionRepository.insert(action)
+
+            val getById = actionRepository.getActionById(action.id)
+            val getDailyList = actionRepository.getDailyAction(today)
+            val getCategoryList = actionRepository.getDailyActionByCategory(today, category.id)
+
+            assert(getById == null)
+            assert(getDailyList?.size == 0)
+            assert(getCategoryList?.size == 0)
+        }
+    }
+
+    // 감춰진 카테고리(카테고리만 삭제)의 경우 카테고리 리스트에는 나오지 말아야 하지만,
+    // 개별로 조회시에 카테고리 노출하고, 액션들도 노출시켜야 한다.(액션 유지하기)
+    @Test
+    fun hiddenCategoryAction() = runTest {
+        val today = 91152000000L // 1972-11-21
+
+        // 등록된 카테고리 (카테고리 리스트에는 감춰진 상태)
+        val category = Category(
+            id = 0,
+            name = "yainsidae",
+            needVolume = true,
+            visible = false
+        )
+
+        val action = Action(
+            id = 0,
+            categoryId = category.id,
+            categoryName = category.name,
+            volume = 100,
+            timestamp = today,
+            memo = "orange-bottle"
+        )
+
+        launch {
+            categoryRepository.insert(category)
+
+            val getAllCategory = categoryRepository.getAllCategory()
+            assert(getAllCategory?.size == 0)
+
+            val getCategory = categoryRepository.getCategoryById(category.id)
+            assert(getCategory == category)
+
+            actionRepository.insert(action)
+
+            val getById = actionRepository.getActionById(action.id)
+            val getDailyList = actionRepository.getDailyAction(today)
+            val getCategoryList = actionRepository.getDailyActionByCategory(today, category.id)
+
+            assert(action == getById)
+            assert(getDailyList?.size == 1)
+            assert(action == getDailyList?.get(0))
+            assert(getCategoryList?.size == 1)
+            assert(action == getCategoryList?.get(0))
+        }
+    }
+
+    @Test
+    fun categoryDeleteTest() = runTest {
+        val today = 91152000000L // 1972-11-21
+
+        // 등록된 카테고리 (카테고리 리스트에는 감춰진 상태)
+        val category = Category(
+            id = 0,
+            name = "yainsidae",
+            needVolume = true,
+            visible = true
+        )
+
+        val action = Action(
+            id = 0,
+            categoryId = category.id,
+            categoryName = category.name,
+            volume = 100,
+            timestamp = today,
+            memo = "orange-bottle"
+        )
+
+        categoryRepository.insert(category)
+        actionRepository.insert(action)
+
+        val getById = actionRepository.getActionById(action.id)
+        val getDailyList = actionRepository.getDailyAction(today)
+        val getCategoryList = actionRepository.getDailyActionByCategory(today, category.id)
+
+        assert(action == getById)
+        assert(getDailyList?.size == 1)
+        assert(action == getDailyList?.get(0))
+        assert(getCategoryList?.size == 1)
+        assert(action == getCategoryList?.get(0))
+
+        categoryRepository.delete(category)
+
+        val getAllCategoryDeleted = categoryRepository.getAllCategory()
+        assert(getAllCategoryDeleted?.size == 0)
+
+        val getCategoryDeleted = categoryRepository.getCategoryById(category.id)
+        assert(getCategoryDeleted == null)
+
+        val getByIdDeleted = actionRepository.getActionById(action.id)
+        val getDailyListDeleted = actionRepository.getDailyAction(today)
+        val getCategoryListDeleted = actionRepository.getDailyActionByCategory(today, category.id)
+
+        assert(getByIdDeleted == null)
+        assert(getDailyListDeleted?.size == 0)
+        assert(getCategoryListDeleted?.size == 0)
+    }
+
+    @Test
+    fun insertActionByDate() = runTest {
+        val today = 91119600000L // 1972-11-21
+        val yesterday = 91033200000L // 1972-11-20
+        val tomorrow = 91206000000L // 1972-11-22
+
+        val endOfYesterday = 91119599999L
+        val endOfToday = 91205999999L
+
+        val category = Category(
+            id = 0,
+            name = "yainsidae",
+            needVolume = true,
+            visible = true
+        )
+
+        val todayAction = Action(
+            id = 0,
+            categoryId = category.id,
+            categoryName = category.name,
+            volume = 100,
+            timestamp = today,
+            memo = "orange-bottle"
+        )
+
+        val endOfTodayAction = Action(
+            id = 1,
+            categoryId = category.id,
+            categoryName = category.name,
+            volume = 100,
+            timestamp = endOfToday,
+            memo = "orange-bottle"
+        )
+
+        val endOfYesterdayAction = Action(
+            id = 2,
+            categoryId = category.id,
+            categoryName = category.name,
+            volume = 100,
+            timestamp = endOfYesterday,
+            memo = "orange-bottle"
+        )
+
+        launch {
+
+            categoryRepository.insert(category)
+
+            actionRepository.insert(todayAction)
+            actionRepository.insert(endOfTodayAction)
+            actionRepository.insert(endOfYesterdayAction)
+
+            val getDailyList = actionRepository.getDailyAction(today)
+            val getCategoryList = actionRepository.getDailyActionByCategory(today, category.id)
+
+            assert(getDailyList?.size == 2)
+            assert(getCategoryList?.size == 2)
+
+            val getYesterdayList = actionRepository.getDailyAction(yesterday)
+            val getYesterdayListCategory = actionRepository.getDailyActionByCategory(yesterday, category.id)
+            assert(getYesterdayList?.size == 1)
+            assert(getYesterdayListCategory?.size == 1)
+
+            val getTomorrowList = actionRepository.getDailyAction(tomorrow)
+            val getTomorrowListCategory = actionRepository.getDailyActionByCategory(tomorrow, category.id)
+            assert(getTomorrowList?.size == 0)
+            assert(getTomorrowListCategory?.size == 0)
+        }
+
+    }
+
+    @Test
+    fun changeCategory() = runTest {
+        val today = 91152000000L // 1972-11-21
+        val category = Category(
+            id = 0,
+            name = "yainsidae",
+            needVolume = true,
+            visible = true
+        )
+        val action = Action(
+            id = 0,
+            categoryId = category.id,
+            categoryName = category.name,
+            volume = 100,
+            timestamp = today,
+            memo = "orange-bottle"
+        )
+        val newCategory = Category(
+            id = 0,
+            name = "simyoungmul",
+            needVolume = true,
+            visible = true
+        )
+
+        launch {
+            categoryRepository.insert(category)
+            actionRepository.insert(action)
+            val getById = actionRepository.getActionById(action.id)
+            assert(getById?.categoryName == category.name)
+
+            categoryRepository.insert(newCategory)
+            val getByIdCategoryChanged = actionRepository.getActionById(action.id)
+            assert(getByIdCategoryChanged?.categoryName == newCategory.name)
+
+        }
+    }
+
+    @Test
+    fun getByCategory() = runTest {
+        val today = 91152000000L // 1972-11-21
+        val category1 = Category(
+            id = 0,
+            name = "yainsidae",
+            needVolume = true,
+            visible = true
+        )
+        val category2 = Category(
+            id = 1,
+            name = "simyoungmool",
+            needVolume = true,
+            visible = true
+        )
+        val category3 = Category(
+            id = 2,
+            name = "pok8",
+            needVolume = true,
+            visible = true
+        )
+
+        val action1_1 = Action(
+            id = 0,
+            categoryId = category1.id,
+            categoryName = category1.name,
+            volume = 100,
+            timestamp = today,
+            memo = "orange-bottle"
+        )
+
+        val action1_2 = Action(
+            id = 1,
+            categoryId = category1.id,
+            categoryName = category1.name,
+            volume = 100,
+            timestamp = today,
+            memo = "orange-bottle"
+        )
+
+        val action1_3 = Action(
+            id = 2,
+            categoryId = category1.id,
+            categoryName = category1.name,
+            volume = 100,
+            timestamp = today,
+            memo = "orange-bottle"
+        )
+
+        val action2_1 = Action(
+            id = 3,
+            categoryId = category2.id,
+            categoryName = category2.name,
+            volume = 100,
+            timestamp = today,
+            memo = "orange-bottle"
+        )
+
+        val action3_1 = Action(
+            id = 4,
+            categoryId = category3.id,
+            categoryName = category3.name,
+            volume = 100,
+            timestamp = today,
+            memo = "orange-bottle"
+        )
+
+        val action3_2 = Action(
+            id = 5,
+            categoryId = category3.id,
+            categoryName = category3.name,
+            volume = 100,
+            timestamp = today,
+            memo = "orange-bottle"
+        )
+
+
+        launch {
+            categoryRepository.insert(category1)
+            categoryRepository.insert(category2)
+            categoryRepository.insert(category3)
+
+            actionRepository.insert(action1_1)
+            actionRepository.insert(action1_2)
+            actionRepository.insert(action1_3)
+            actionRepository.insert(action2_1)
+            actionRepository.insert(action3_1)
+            actionRepository.insert(action3_2)
+
+            val getDailyList = actionRepository.getDailyAction(today)
+            val getCategory1List = actionRepository.getDailyActionByCategory(today, category1.id)
+            val getCategory2List = actionRepository.getDailyActionByCategory(today, category2.id)
+            val getCategory3List = actionRepository.getDailyActionByCategory(today, category3.id)
+
+            assert(getDailyList?.size == 6)
+            assert(getCategory1List?.size == 3)
+            assert(getCategory2List?.size == 1)
+            assert(getCategory3List?.size == 2)
+        }
+
+    }
 
     @After
     @Throws(IOException::class)
     fun closeDb() {
         database.close()
     }
+
 
 }

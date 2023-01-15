@@ -6,6 +6,7 @@ interface ActionRepository {
     suspend fun getDailyAction(today: Long): List<Action>?
     suspend fun getDailyActionByCategory(today: Long, categoryId: Int): List<Action>?
     suspend fun getActionById(id: Int): Action?
+    suspend fun deleteByCategoryId(categoryId: Int)
     suspend fun insert(action: Action)
     suspend fun delete(action: Action)
 }

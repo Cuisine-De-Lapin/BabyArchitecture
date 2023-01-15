@@ -18,6 +18,8 @@ class CategoryRepositoryImpl @Inject constructor(
         categoryMapper.mapToCategory(it)
     }
 
+    override suspend fun hideCategoryById(id: Int) = categoryDAO.hideCategoryById(id)
+
     override suspend fun insert(category: Category) =
         categoryDAO.insert(categoryMapper.mapToCategoryEntity(category))
 

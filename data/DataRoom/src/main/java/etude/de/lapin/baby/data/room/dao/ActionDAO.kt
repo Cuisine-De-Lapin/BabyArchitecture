@@ -31,6 +31,9 @@ interface ActionDAO {
     @Query("SELECT COUNT(*) FROM `Action` WHERE timestamp >= :today AND timestamp < (:today + :oneDay) AND categoryId = :categoryId")
     fun calculateTodayCountByCategory(today: Long, categoryId: Int, oneDay: Long = ONE_DAY): Int
 
+    @Query("DELETE FROM `Action` WHERE categoryId = :categoryId")
+    fun deleteByCategoryId(categoryId: Int)
+
     // TODO : 카테고리 별로 삭제하는거 추가하기
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

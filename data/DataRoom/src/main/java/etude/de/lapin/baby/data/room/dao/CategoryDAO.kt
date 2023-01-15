@@ -15,6 +15,9 @@ interface CategoryDAO {
     @Query("SELECT * FROM `Category` WHERE id = :id")
     fun loadCategoryById(id: Int): CategoryEntity?
 
+    @Query("UPDATE `Category` SET visible = 0 WHERE id = :id")
+    fun hideCategoryById(id: Int)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(action: CategoryEntity)
 
