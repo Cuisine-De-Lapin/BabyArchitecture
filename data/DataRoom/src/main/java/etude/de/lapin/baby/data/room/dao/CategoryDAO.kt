@@ -1,10 +1,6 @@
 package etude.de.lapin.baby.data.room.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import etude.de.lapin.baby.data.room.model.CategoryEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -19,8 +15,11 @@ interface CategoryDAO {
     @Query("UPDATE `Category` SET visible = 0 WHERE id = :id")
     fun hideCategoryById(id: Int)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(action: CategoryEntity)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    fun update(action: CategoryEntity)
 
     @Delete
     fun delete(action: CategoryEntity)

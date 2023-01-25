@@ -13,7 +13,7 @@ data class ActionEntity (
     val categoryId: Int,
 
     @ColumnInfo(name = "volume")
-    val volume: Int? = null,
+    val volume: Float? = null,
 
     @ColumnInfo(name = "timestamp")
     val timestamp: Long,

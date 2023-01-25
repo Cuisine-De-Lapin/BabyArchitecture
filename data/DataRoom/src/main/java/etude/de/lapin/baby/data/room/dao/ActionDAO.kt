@@ -21,22 +21,31 @@ interface ActionDAO {
     fun loadDailyAction(today: Long, oneDay: Long = ONE_DAY): Flow<List<ActionResultEntity>>
 
     @Query("SELECT a.id, a.categoryId, b.name categoryName, a.volume, a.timestamp, a.memo FROM `Action` a  INNER JOIN `Category` b  ON a.categoryId = b.id WHERE timestamp >= :today AND timestamp < (:today + :oneDay) AND categoryId = :categoryId")
-    fun loadDailyActionByCategory(today: Long, categoryId: Int, oneDay: Long = ONE_DAY): Flow<List<ActionResultEntity>>
+    fun loadDailyActionFlowByCategory(today: Long, categoryId: Int, oneDay: Long = ONE_DAY): Flow<List<ActionResultEntity>>
+
+    @Query("SELECT a.id, a.categoryId, b.name categoryName, a.volume, a.timestamp, a.memo FROM `Action` a  INNER JOIN `Category` b  ON a.categoryId = b.id WHERE timestamp >= :today AND timestamp < (:today + :oneDay) AND categoryId = :categoryId")
+    fun loadDailyActionByCategory(today: Long, categoryId: Int, oneDay: Long = ONE_DAY): List<ActionResultEntity>
 
     @Query("SELECT a.id, a.categoryId, b.name categoryName, a.volume, a.timestamp, a.memo FROM `Action` a  INNER JOIN `Category` b  ON a.categoryId = b.id WHERE a.id = :id")
     fun loadActionById(id: Int): Flow<ActionResultEntity?>
 
+    @Query("SELECT AVG(volume) FROM `Action` WHERE timestamp >= :today AND timestamp < (:today + :oneDay) AND categoryId = :categoryId")
+    fun calculateTodayVolumeAvgByCategory(today: Long, categoryId: Int, oneDay: Long = ONE_DAY): Float?
+
     @Query("SELECT SUM(volume) FROM `Action` WHERE timestamp >= :today AND timestamp < (:today + :oneDay) AND categoryId = :categoryId")
-    fun calculateTodayVolumeSumByCategory(today: Long, categoryId: Int, oneDay: Long = ONE_DAY): Flow<Int>
+    fun calculateTodayVolumeSumByCategory(today: Long, categoryId: Int, oneDay: Long = ONE_DAY): Float?
 
     @Query("SELECT COUNT(*) FROM `Action` WHERE timestamp >= :today AND timestamp < (:today + :oneDay) AND categoryId = :categoryId")
-    fun calculateTodayCountByCategory(today: Long, categoryId: Int, oneDay: Long = ONE_DAY): Flow<Int>
+    fun calculateTodayCountByCategory(today: Long, categoryId: Int, oneDay: Long = ONE_DAY): Int
 
     @Query("DELETE FROM `Action` WHERE categoryId = :categoryId")
     fun deleteByCategoryId(categoryId: Int)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(action: ActionEntity)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    fun update(action: ActionEntity)
 
     @Delete
     fun delete(action: ActionEntity)

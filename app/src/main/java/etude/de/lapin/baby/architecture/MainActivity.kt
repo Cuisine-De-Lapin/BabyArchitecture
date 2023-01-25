@@ -3,21 +3,28 @@ package etude.de.lapin.baby.architecture
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.colorResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import etude.de.lapin.baby.architecture.ui.action.GetDailyActionList
+import etude.de.lapin.baby.architecture.ui.action.InsertAction
+import etude.de.lapin.baby.architecture.ui.action.MenuAction
+import etude.de.lapin.baby.architecture.ui.category.MenuCategory
 import etude.de.lapin.baby.architecture.ui.theme.BabyArchitectureTheme
+import etude.de.lapin.baby.architecture.viewmodel.ActionViewModel
 import etude.de.lapin.baby.architecture.viewmodel.CategoryViewModel
-import etude.de.lapin.baby.domain.action.model.Category
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -26,6 +33,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val categoryViewModel = hiltViewModel<CategoryViewModel>()
+            val actionViewModel = hiltViewModel<ActionViewModel>()
+            var currentMenu by remember { mutableStateOf(BottomMenu.ACTIONS) }
+            val defaultDate = LocalDateTime.now()
+
             //val exampleEntities: List<ExampleEntity> by viewModel.exampleEntities.collectAsState(initial = emptyList())
 
             BabyArchitectureTheme {
@@ -35,8 +46,24 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     Column {
-                        insertCategory(categoryViewModel = categoryViewModel)
-                        categoryList(categoryViewModel = categoryViewModel)
+                        Box(modifier = Modifier.weight(1f, true)) {
+                            when (currentMenu) {
+                                BottomMenu.ACTIONS -> {
+                                    Column {
+                                        MenuAction(
+                                            actionViewModel = actionViewModel,
+                                            categoryViewModel = categoryViewModel,
+                                            defaultDate = defaultDate
+                                        )
+                                    }
+
+                                }
+                                BottomMenu.CATEGORY -> {
+                                    MenuCategory(categoryViewModel = categoryViewModel)
+                                }
+                            }
+                        }
+                        bottomMenu(currentMenu = currentMenu, onMenuChanged = { currentMenu = it })
                     }
                 }
             }
@@ -44,40 +71,20 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun categoryList(categoryViewModel: CategoryViewModel) {
-        val categories: List<Category> by categoryViewModel.categoryFlow.collectAsState(initial = emptyList())
-        LazyColumn {
-            items(categories) {
-                Text(it.name)
+    fun bottomMenu(currentMenu: BottomMenu, onMenuChanged: (BottomMenu) -> Unit) {
+        LazyRow {
+            items(BottomMenu.values()) {
+                Text(
+                    text = it.name,
+                    color = colorResource(id = if (it == currentMenu) R.color.purple_200 else R.color.black),
+                    modifier = Modifier.clickable {
+                        onMenuChanged(it)
+                    })
             }
         }
     }
+}
 
-    @Composable
-    fun insertCategory(categoryViewModel: CategoryViewModel) {
-        var categoryName by remember { mutableStateOf("") }
-        var needVolume by remember { mutableStateOf(false) }
-
-        Column {
-            Row {
-                Text(text = stringResource(id = R.string.category_insert_name))
-                TextField(value = categoryName, onValueChange = {
-                    categoryName = it
-                })
-            }
-            Row {
-                Text(text = stringResource(id = R.string.category_insert_need_volume))
-                Switch(checked = needVolume, onCheckedChange = {
-                    needVolume = it
-                })
-            }
-            Button(onClick = { 
-                categoryViewModel.insertCategory(categoryName, needVolume)
-                categoryName = ""
-                needVolume = false
-            }) {
-                Text(stringResource(id = R.string.category_insert_done))
-            }
-        }
-    }
+enum class BottomMenu {
+    ACTIONS, CATEGORY
 }

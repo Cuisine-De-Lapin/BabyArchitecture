@@ -62,7 +62,7 @@ class ActionDataTest {
             id = 0,
             categoryId = category.id,
             categoryName = category.name,
-            volume = 100,
+            volume = 100f,
             timestamp = today,
             memo = "orange-bottle"
         )
@@ -109,7 +109,7 @@ class ActionDataTest {
             id = 0,
             categoryId = category.id,
             categoryName = category.name,
-            volume = 100,
+            volume = 100f,
             timestamp = today,
             memo = "orange-bottle"
         )
@@ -152,7 +152,7 @@ class ActionDataTest {
             id = 0,
             categoryId = wrongCategory.id,
             categoryName = wrongCategory.name,
-            volume = 100,
+            volume = 100f,
             timestamp = today,
             memo = "orange-bottle"
         )
@@ -197,7 +197,7 @@ class ActionDataTest {
             id = 0,
             categoryId = category.id,
             categoryName = category.name,
-            volume = 100,
+            volume = 100f,
             timestamp = today,
             memo = "orange-bottle"
         )
@@ -241,7 +241,7 @@ class ActionDataTest {
             id = 0,
             categoryId = category.id,
             categoryName = category.name,
-            volume = 100,
+            volume = 100f,
             timestamp = today,
             memo = "orange-bottle"
         )
@@ -296,7 +296,7 @@ class ActionDataTest {
             id = 0,
             categoryId = category.id,
             categoryName = category.name,
-            volume = 100,
+            volume = 100f,
             timestamp = today,
             memo = "orange-bottle"
         )
@@ -305,7 +305,7 @@ class ActionDataTest {
             id = 1,
             categoryId = category.id,
             categoryName = category.name,
-            volume = 100,
+            volume = 100f,
             timestamp = endOfToday,
             memo = "orange-bottle"
         )
@@ -314,7 +314,7 @@ class ActionDataTest {
             id = 2,
             categoryId = category.id,
             categoryName = category.name,
-            volume = 100,
+            volume = 100f,
             timestamp = endOfYesterday,
             memo = "orange-bottle"
         )
@@ -359,7 +359,7 @@ class ActionDataTest {
             id = 0,
             categoryId = category.id,
             categoryName = category.name,
-            volume = 100,
+            volume = 100f,
             timestamp = today,
             memo = "orange-bottle"
         )
@@ -409,7 +409,7 @@ class ActionDataTest {
             id = 0,
             categoryId = category1.id,
             categoryName = category1.name,
-            volume = 100,
+            volume = 100f,
             timestamp = today,
             memo = "orange-bottle"
         )
@@ -418,7 +418,7 @@ class ActionDataTest {
             id = 1,
             categoryId = category1.id,
             categoryName = category1.name,
-            volume = 100,
+            volume = 100f,
             timestamp = today,
             memo = "orange-bottle"
         )
@@ -427,7 +427,7 @@ class ActionDataTest {
             id = 2,
             categoryId = category1.id,
             categoryName = category1.name,
-            volume = 100,
+            volume = 100f,
             timestamp = today,
             memo = "orange-bottle"
         )
@@ -436,7 +436,7 @@ class ActionDataTest {
             id = 3,
             categoryId = category2.id,
             categoryName = category2.name,
-            volume = 100,
+            volume = 100f,
             timestamp = today,
             memo = "orange-bottle"
         )
@@ -445,7 +445,7 @@ class ActionDataTest {
             id = 4,
             categoryId = category3.id,
             categoryName = category3.name,
-            volume = 100,
+            volume = 100f,
             timestamp = today,
             memo = "orange-bottle"
         )
@@ -454,7 +454,7 @@ class ActionDataTest {
             id = 5,
             categoryId = category3.id,
             categoryName = category3.name,
-            volume = 100,
+            volume = 100f,
             timestamp = today,
             memo = "orange-bottle"
         )

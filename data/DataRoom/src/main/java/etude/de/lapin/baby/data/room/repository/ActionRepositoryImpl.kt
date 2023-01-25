@@ -5,8 +5,6 @@ import etude.de.lapin.baby.data.room.mapper.ActionMapper
 import etude.de.lapin.baby.domain.action.model.Action
 import etude.de.lapin.baby.domain.action.repository.ActionRepository
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
 
 class ActionRepositoryImpl @Inject constructor(
@@ -20,7 +18,7 @@ class ActionRepositoryImpl @Inject constructor(
 
     }
     override fun getDailyActionByCategory(today: Long, categoryId: Int) =
-        actionDAO.loadDailyActionByCategory(today, categoryId).map {
+        actionDAO.loadDailyActionFlowByCategory(today, categoryId).map {
             it.map { item ->
                 actionMapper.mapToAction(item)
             }
@@ -29,5 +27,6 @@ class ActionRepositoryImpl @Inject constructor(
 
     override suspend fun deleteByCategoryId(categoryId: Int) = actionDAO.deleteByCategoryId(categoryId)
     override suspend fun insert(action: Action) = actionDAO.insert(actionMapper.mapToEntity(action))
+    override suspend fun update(action: Action) = actionDAO.update(actionMapper.mapToEntity(action))
     override suspend fun delete(action: Action) = actionDAO.delete(actionMapper.mapToEntity(action))
 }

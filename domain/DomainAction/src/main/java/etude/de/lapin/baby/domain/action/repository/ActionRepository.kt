@@ -9,5 +9,6 @@ interface ActionRepository {
     fun getActionById(id: Int): Flow<Action?>
     suspend fun deleteByCategoryId(categoryId: Int)
     suspend fun insert(action: Action)
+    suspend fun update(action: Action)
     suspend fun delete(action: Action)
 }

@@ -26,6 +26,9 @@ class CategoryRepositoryImpl @Inject constructor(
     override suspend fun insert(category: Category) =
         categoryDAO.insert(categoryMapper.mapToCategoryEntity(category))
 
+    override suspend fun update(category: Category) =
+        categoryDAO.update(categoryMapper.mapToCategoryEntity(category))
+
     override suspend fun delete(category: Category) =
         categoryDAO.delete(categoryMapper.mapToCategoryEntity(category))
 }
