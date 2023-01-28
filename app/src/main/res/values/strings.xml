@@ -2,21 +2,34 @@
     <string name="app_name">BabyArchitecture</string>
     <string name="category_insert_name">카테고리명</string>
     <string name="category_insert_need_volume">용량 측정</string>
+    <string name="category_delete_warning">카테고리를 삭제하는 경우,\n등록된 행동들도 삭제됩니다.\n계속 하시겠습니까?</string>
 
     <string name="action_empty_category">카테고리가 아직 없습니다.\n카테고리를 먼저 추가해주세요.</string>
     <string name="action_wrong_category">카테고리를 선택해주세요.</string>
     <string name="action_category_name">카테고리</string>
-    <string name="action_volume">용량(숫자만)</string>
+    <string name="action_volume">용량\n(숫자만)</string>
     <string name="action_timestamp">시간</string>
+    <string name="action_memo">메모</string>
     <string name="action_prev_day">전날</string>
     <string name="action_next_day">다음날</string>
+    <string name="action_today">오늘</string>
+    <string name="show_insert_dialog">추가하기</string>
 
     <string name="insert_done">추가</string>
     <string name="update_done">수정</string>
+    <string name="delete_done">삭제</string>
     <string name="ok">확인</string>
     <string name="cancel">취소</string>
 
     <string name="date_format">yyyy-MM-dd</string>
     <string name="hour_format">HH:mm</string>
     <string name="date_time_format">yyyy-MM-dd HH:mm</string>
+    <string name="hour_min_format">%d시간 %d분</string>
+
+    <string name="statistics_category">분류</string>
+    <string name="statistics_total_count">총 횟수</string>
+    <string name="statistics_total_volume">총량</string>
+    <string name="statistics_avg_volume">평균량</string>
+    <string name="statistics_avg_internal_time">평균 간격</string>
+
 </resources>

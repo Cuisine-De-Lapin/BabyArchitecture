@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="dialog_insert_width">300dp</dimen>
+    <dimen name="dialog_insert_height">200dp</dimen>
+    <dimen name="dialog_insert_action_height">300dp</dimen>
+    <dimen name="dialog_insert_column_content_width">150dp</dimen>
+    <dimen name="dialog_insert_column_title_width">80dp</dimen>
+    <dimen name="default_padding">15dp</dimen>
+    <dimen name="item_padding">5dp</dimen>
+    <dimen name="divider_height">5.5dp</dimen>
+</resources>

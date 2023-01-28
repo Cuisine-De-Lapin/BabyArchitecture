@@ -14,16 +14,16 @@ interface ActionDAO {
     @Query("SELECT * FROM `Action`")
     fun loadAll(): List<ActionEntity>?
 
-    @Query("SELECT a.id, a.categoryId, b.name categoryName, a.volume, a.timestamp, a.memo FROM `Action` a  INNER JOIN `Category` b  ON a.categoryId = b.id")
+    @Query("SELECT a.id, a.categoryId, b.name categoryName, a.volume, a.timestamp, a.memo FROM `Action` a  INNER JOIN `Category` b  ON a.categoryId = b.id ORDER BY timestamp")
     fun loadAllAction(): Flow<List<ActionResultEntity>>
 
-    @Query("SELECT a.id, a.categoryId, b.name categoryName, a.volume, a.timestamp, a.memo FROM `Action` a  INNER JOIN `Category` b  ON a.categoryId = b.id WHERE timestamp >= :today AND timestamp < (:today + :oneDay)")
+    @Query("SELECT a.id, a.categoryId, b.name categoryName, a.volume, a.timestamp, a.memo FROM `Action` a  INNER JOIN `Category` b  ON a.categoryId = b.id WHERE timestamp >= :today AND timestamp < (:today + :oneDay) ORDER BY timestamp")
     fun loadDailyAction(today: Long, oneDay: Long = ONE_DAY): Flow<List<ActionResultEntity>>
 
-    @Query("SELECT a.id, a.categoryId, b.name categoryName, a.volume, a.timestamp, a.memo FROM `Action` a  INNER JOIN `Category` b  ON a.categoryId = b.id WHERE timestamp >= :today AND timestamp < (:today + :oneDay) AND categoryId = :categoryId")
+    @Query("SELECT a.id, a.categoryId, b.name categoryName, a.volume, a.timestamp, a.memo FROM `Action` a  INNER JOIN `Category` b  ON a.categoryId = b.id WHERE timestamp >= :today AND timestamp < (:today + :oneDay) AND categoryId = :categoryId ORDER BY timestamp")
     fun loadDailyActionFlowByCategory(today: Long, categoryId: Int, oneDay: Long = ONE_DAY): Flow<List<ActionResultEntity>>
 
-    @Query("SELECT a.id, a.categoryId, b.name categoryName, a.volume, a.timestamp, a.memo FROM `Action` a  INNER JOIN `Category` b  ON a.categoryId = b.id WHERE timestamp >= :today AND timestamp < (:today + :oneDay) AND categoryId = :categoryId")
+    @Query("SELECT a.id, a.categoryId, b.name categoryName, a.volume, a.timestamp, a.memo FROM `Action` a  INNER JOIN `Category` b  ON a.categoryId = b.id WHERE timestamp >= :today AND timestamp < (:today + :oneDay) AND categoryId = :categoryId ORDER BY timestamp")
     fun loadDailyActionByCategory(today: Long, categoryId: Int, oneDay: Long = ONE_DAY): List<ActionResultEntity>
 
     @Query("SELECT a.id, a.categoryId, b.name categoryName, a.volume, a.timestamp, a.memo FROM `Action` a  INNER JOIN `Category` b  ON a.categoryId = b.id WHERE a.id = :id")
@@ -41,7 +41,7 @@ interface ActionDAO {
     @Query("DELETE FROM `Action` WHERE categoryId = :categoryId")
     fun deleteByCategoryId(categoryId: Int)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(action: ActionEntity)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)

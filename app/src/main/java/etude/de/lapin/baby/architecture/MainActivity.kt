@@ -3,28 +3,33 @@ package etude.de.lapin.baby.architecture
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import etude.de.lapin.baby.architecture.ui.action.GetDailyActionList
-import etude.de.lapin.baby.architecture.ui.action.InsertAction
 import etude.de.lapin.baby.architecture.ui.action.MenuAction
 import etude.de.lapin.baby.architecture.ui.category.MenuCategory
+import etude.de.lapin.baby.architecture.ui.statistics.MenuStatistics
 import etude.de.lapin.baby.architecture.ui.theme.BabyArchitectureTheme
 import etude.de.lapin.baby.architecture.viewmodel.ActionViewModel
 import etude.de.lapin.baby.architecture.viewmodel.CategoryViewModel
-import java.time.Instant
+import etude.de.lapin.baby.architecture.viewmodel.StatisticsViewModel
 import java.time.LocalDateTime
-import java.time.ZoneId
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -34,8 +39,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             val categoryViewModel = hiltViewModel<CategoryViewModel>()
             val actionViewModel = hiltViewModel<ActionViewModel>()
+            val statisticsViewModel = hiltViewModel<StatisticsViewModel>()
             var currentMenu by remember { mutableStateOf(BottomMenu.ACTIONS) }
             val defaultDate = LocalDateTime.now()
+            val currentDate: MutableState<LocalDateTime> = remember { mutableStateOf(defaultDate.toLocalDate().atStartOfDay()) }
 
             //val exampleEntities: List<ExampleEntity> by viewModel.exampleEntities.collectAsState(initial = emptyList())
 
@@ -45,7 +52,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Column {
+                    Column(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
                         Box(modifier = Modifier.weight(1f, true)) {
                             when (currentMenu) {
                                 BottomMenu.ACTIONS -> {
@@ -53,6 +62,7 @@ class MainActivity : ComponentActivity() {
                                         MenuAction(
                                             actionViewModel = actionViewModel,
                                             categoryViewModel = categoryViewModel,
+                                            currentDate = currentDate,
                                             defaultDate = defaultDate
                                         )
                                     }
@@ -60,6 +70,13 @@ class MainActivity : ComponentActivity() {
                                 }
                                 BottomMenu.CATEGORY -> {
                                     MenuCategory(categoryViewModel = categoryViewModel)
+                                }
+                                BottomMenu.STATISTICS -> {
+                                    MenuStatistics(
+                                        statisticsViewModel = statisticsViewModel,
+                                        currentDate = currentDate,
+                                        defaultDate = defaultDate
+                                    )
                                 }
                             }
                         }
@@ -72,19 +89,23 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun bottomMenu(currentMenu: BottomMenu, onMenuChanged: (BottomMenu) -> Unit) {
-        LazyRow {
-            items(BottomMenu.values()) {
-                Text(
-                    text = it.name,
-                    color = colorResource(id = if (it == currentMenu) R.color.purple_200 else R.color.black),
-                    modifier = Modifier.clickable {
-                        onMenuChanged(it)
-                    })
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            BottomMenu.values().forEach {
+                Button(onClick = {
+                    onMenuChanged(it)
+                }, modifier = Modifier.weight(1f, true)) {
+                    Text(
+                        text = it.name,
+                        color = colorResource(id = if (it == currentMenu) R.color.white else R.color.purple_200),
+                    )
+                }
             }
         }
     }
 }
 
 enum class BottomMenu {
-    ACTIONS, CATEGORY
+    ACTIONS, CATEGORY, STATISTICS
 }

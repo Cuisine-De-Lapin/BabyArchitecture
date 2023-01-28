@@ -9,13 +9,8 @@ class CategoryDeleteUsecase @Inject constructor(
     private val categoryRepository: CategoryRepository,
     private val actionRepository: ActionRepository
     ) {
-    suspend operator fun invoke(category: Category, isKeepActions: Boolean) {
-        if (isKeepActions) {
-            categoryRepository.hideCategoryById(category.id)
-        } else {
-            actionRepository.deleteByCategoryId(category.id)
-            categoryRepository.delete(category)
-        }
-
+    suspend operator fun invoke(category: Category) {
+        actionRepository.deleteByCategoryId(category.id)
+        categoryRepository.delete(category)
     }
 }

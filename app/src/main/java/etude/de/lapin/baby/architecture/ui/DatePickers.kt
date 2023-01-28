@@ -1,4 +1,4 @@
-package etude.de.lapin.baby.architecture
+package etude.de.lapin.baby.architecture.ui
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -7,13 +7,19 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import etude.de.lapin.baby.architecture.R
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun ShowDatePicker(date: LocalDateTime, onValueChanged: (LocalDateTime) -> Unit) {
+fun ShowDatePicker(
+    date: LocalDateTime,
+    onValueChanged: (LocalDateTime) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val datePickerDialog = DatePickerDialog(
         LocalContext.current,
         { _, year: Int, month: Int, day: Int ->
@@ -28,7 +34,7 @@ fun ShowDatePicker(date: LocalDateTime, onValueChanged: (LocalDateTime) -> Unit)
 
     Button(onClick = {
         datePickerDialog.show()
-    }) {
+    }, modifier = modifier) {
         DateText(date)
     }
 }
@@ -42,7 +48,11 @@ fun DateText(date: LocalDateTime) {
 
 
 @Composable
-fun ShowTimePicker(date: LocalDateTime, onValueChanged: (LocalDateTime) -> Unit) {
+fun ShowTimePicker(
+    date: LocalDateTime,
+    onValueChanged: (LocalDateTime) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val timePickerDialog = TimePickerDialog(
         LocalContext.current,
         { _, hour: Int, minute: Int ->
@@ -55,7 +65,7 @@ fun ShowTimePicker(date: LocalDateTime, onValueChanged: (LocalDateTime) -> Unit)
     )
     Button(onClick = {
         timePickerDialog.show()
-    }) {
+    }, modifier = modifier) {
         HourText(date)
     }
 }
@@ -84,6 +94,47 @@ fun ShowDialog(openDialog: MutableState<Boolean>, message: String, closeText: St
                         openDialog.value = false
                     }) {
                     Text(closeText)
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun ShowDialog(
+    openDialog: MutableState<Boolean>,
+    message: String,
+    okText: String,
+    cancelText: String,
+    doOnOk: () -> Unit,
+    doOnCancel: () -> Unit
+) {
+
+    if (openDialog.value) {
+        AlertDialog(
+            onDismissRequest = {
+                openDialog.value = false
+                doOnCancel.invoke()
+            },
+            text = {
+                Text(message)
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        openDialog.value = false
+                        doOnOk.invoke()
+                    }) {
+                    Text(okText)
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        openDialog.value = false
+                        doOnCancel.invoke()
+                    }) {
+                    Text(cancelText)
                 }
             }
         )
